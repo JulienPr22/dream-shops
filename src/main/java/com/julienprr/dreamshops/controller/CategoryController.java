@@ -23,7 +23,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
             List<Category> categories = categoryService.getAllCategories();
-            return ResponseEntity.ok(new ApiResponse("Found!", categories));
+            return ResponseEntity.ok(new ApiResponse("Success", categories));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Error:", INTERNAL_SERVER_ERROR));
         }
@@ -33,7 +33,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
         try {
             Category category = categoryService.getCategoryById(id);
-            return ResponseEntity.ok(new ApiResponse("Found!", category));
+            return ResponseEntity.ok(new ApiResponse("Success", category));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -43,7 +43,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
         try {
             Category category = categoryService.getCategoryByName(name);
-            return ResponseEntity.ok(new ApiResponse("Found!", category));
+            return ResponseEntity.ok(new ApiResponse("Success", category));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -53,7 +53,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> addCategory(@RequestBody Category category) {
         try {
             Category newCategory = categoryService.addCategory(category);
-            return ResponseEntity.ok(new ApiResponse("Success!", newCategory));
+            return ResponseEntity.ok(new ApiResponse("Category added successfully", newCategory));
         } catch (AlreadyExistsException e) {
             return ResponseEntity.status(CONFLICT).body(new ApiResponse("Error:", CONFLICT));
         }
@@ -63,7 +63,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long id, @RequestBody Category category) {
         try {
             Category updatedCategory = categoryService.updateCategory(id, category);
-            return ResponseEntity.ok(new ApiResponse("Success!", updatedCategory));
+            return ResponseEntity.ok(new ApiResponse("Category updated successfully", updatedCategory));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -73,7 +73,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
         try {
             categoryService.deleteCategoryById(id);
-            return ResponseEntity.ok(new ApiResponse("Success!", null));
+            return ResponseEntity.ok(new ApiResponse("Category deleted successfully", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
