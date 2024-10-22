@@ -34,7 +34,6 @@ public class CartService implements ICartService {
         cartItemRepository.deleteAllByCartId(id);
         cart.getCartItems().clear();
         cartRepository.deleteById(id);
-
     }
 
     @Override
@@ -49,5 +48,10 @@ public class CartService implements ICartService {
         Long cartId = cartIdGenerator.incrementAndGet();
         newCart.setId(cartId);
         return cartRepository.save(newCart).getId();
+    }
+
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId);
     }
 }

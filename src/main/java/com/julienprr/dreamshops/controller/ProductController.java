@@ -3,8 +3,8 @@ package com.julienprr.dreamshops.controller;
 import com.julienprr.dreamshops.dto.ProductDto;
 import com.julienprr.dreamshops.exceptions.ResourceNotFoundException;
 import com.julienprr.dreamshops.model.Product;
-import com.julienprr.dreamshops.request.AddProductRequest;
-import com.julienprr.dreamshops.request.UpdateProductRequest;
+import com.julienprr.dreamshops.request.ProductAddRequest;
+import com.julienprr.dreamshops.request.ProductUpdateRequest;
 import com.julienprr.dreamshops.response.ApiResponse;
 import com.julienprr.dreamshops.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -112,7 +112,7 @@ public class ProductController {
 
 
     @PostMapping("product/add")
-    public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
+    public ResponseEntity<ApiResponse> addProduct(@RequestBody ProductAddRequest product) {
         try {
             Product newProduct = productService.addProduct(product);
             ProductDto productDto = productService.convertToDto(newProduct);
@@ -123,7 +123,7 @@ public class ProductController {
     }
 
     @PutMapping("product/update/{id}")
-    public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest product) {
+    public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long id, @RequestBody ProductUpdateRequest product) {
         try {
             Product updatedProduct = productService.updateProduct(id, product);
             ProductDto productDto = productService.convertToDto(updatedProduct);

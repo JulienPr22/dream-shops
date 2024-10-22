@@ -9,8 +9,8 @@ import com.julienprr.dreamshops.model.Product;
 import com.julienprr.dreamshops.repository.CategoryRepository;
 import com.julienprr.dreamshops.repository.ImageRepository;
 import com.julienprr.dreamshops.repository.ProductRepository;
-import com.julienprr.dreamshops.request.AddProductRequest;
-import com.julienprr.dreamshops.request.UpdateProductRequest;
+import com.julienprr.dreamshops.request.ProductAddRequest;
+import com.julienprr.dreamshops.request.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class ProductService implements IProductService {
     private final ImageRepository imageRepository;
 
     @Override
-    public Product addProduct(AddProductRequest request) {
+    public Product addProduct(ProductAddRequest request) {
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName())).orElseGet(() -> {
             Category newCategory = new Category(request.getCategory().getName());
             return categoryRepository.save(newCategory);
@@ -37,7 +37,7 @@ public class ProductService implements IProductService {
         return productRepository.save(createProduct(request, category));
     }
 
-    private Product createProduct(AddProductRequest request, Category category) {
+    private Product createProduct(ProductAddRequest request, Category category) {
         return new Product(request.getName(), request.getBrand(), request.getDescription(), request.getPrice(), request.getInventory(), request.getCategory());
     }
 
@@ -54,11 +54,11 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product updateProduct(Long productId, UpdateProductRequest request) {
+    public Product updateProduct(Long productId, ProductUpdateRequest request) {
         return productRepository.findById(productId).map(existingProduct -> updateExistingProduct(existingProduct, request)).map(productRepository::save).orElseThrow(() -> new ResourceNotFoundException("Product not found."));
     }
 
-    private Product updateExistingProduct(Product existingProduct, UpdateProductRequest request) {
+    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request) {
         existingProduct.setName(request.getName());
         existingProduct.setBrand(request.getBrand());
         existingProduct.setDescription(request.getDescription());

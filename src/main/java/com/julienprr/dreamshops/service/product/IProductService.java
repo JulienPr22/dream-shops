@@ -2,19 +2,19 @@ package com.julienprr.dreamshops.service.product;
 
 import com.julienprr.dreamshops.dto.ProductDto;
 import com.julienprr.dreamshops.model.Product;
-import com.julienprr.dreamshops.request.AddProductRequest;
-import com.julienprr.dreamshops.request.UpdateProductRequest;
+import com.julienprr.dreamshops.request.ProductAddRequest;
+import com.julienprr.dreamshops.request.ProductUpdateRequest;
 
 import java.util.List;
 
 public interface IProductService {
-    Product addProduct(AddProductRequest request);
+    Product addProduct(ProductAddRequest request);
 
     Product getProductById(Long id);
 
     void deleteProductById(Long id);
 
-    Product updateProduct(Long productId, UpdateProductRequest request);
+    Product updateProduct(Long productId, ProductUpdateRequest request);
 
     List<Product> getAllProducts();
 
