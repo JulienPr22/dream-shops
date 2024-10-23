@@ -1,8 +1,12 @@
 package com.julienprr.dreamshops.service.order;
 
+import com.julienprr.dreamshops.dto.OrderDto;
 import com.julienprr.dreamshops.model.Order;
+
+import java.util.List;
 
 public interface IOrderService {
     Order placeOrder(Long userId);
-    Order getOrderById(Long orderId);
+    OrderDto getOrderById(Long orderId);
+    List<OrderDto> getUserOrders(Long userId);
 }

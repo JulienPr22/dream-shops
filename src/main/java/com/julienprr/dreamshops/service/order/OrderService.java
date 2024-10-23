@@ -1,5 +1,6 @@
 package com.julienprr.dreamshops.service.order;
 
+import com.julienprr.dreamshops.dto.OrderDto;
 import com.julienprr.dreamshops.enums.OrderStatus;
 import com.julienprr.dreamshops.exceptions.InsufficientStockException;
 import com.julienprr.dreamshops.exceptions.ResourceNotFoundException;
@@ -11,12 +12,11 @@ import com.julienprr.dreamshops.repository.OrderRepository;
 import com.julienprr.dreamshops.repository.ProductRepository;
 import com.julienprr.dreamshops.service.cart.ICartService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import javax.naming.InsufficientResourcesException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,6 +26,7 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ICartService cartService;
+    private final ModelMapper modelMapper;
 
     @Override
     public Order placeOrder(Long userId) {
@@ -71,12 +72,19 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Order getOrderById(Long orderId) {
-        return orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    public OrderDto getOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .map(this::convertToDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
-        public List<Order> getUSerOrders(Long userId) {
-        return  orderRepository.findByUserId(userId);
-        }
+    @Override
+    public List<OrderDto> getUserOrders(Long userId) {
+        return orderRepository.findByUserId(userId).stream().map(this::convertToDto).toList();
+    }
+
+    private OrderDto convertToDto(Order order) {
+        return modelMapper.map(order, OrderDto.class);
+    }
 
 }
