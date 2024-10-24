@@ -1,5 +1,6 @@
 package com.julienprr.dreamshops.controller;
 
+import com.julienprr.dreamshops.dto.CartDto;
 import com.julienprr.dreamshops.exceptions.ResourceNotFoundException;
 import com.julienprr.dreamshops.model.Cart;
 import com.julienprr.dreamshops.response.ApiResponse;
@@ -22,7 +23,8 @@ public class CartController {
     public ResponseEntity<ApiResponse> getCartById(@PathVariable Long cartId) {
         try {
             Cart cart = cartService.getCartById(cartId);
-            return ResponseEntity.ok(new ApiResponse("Success", cart));
+            CartDto cartDto = cartService.convertToDto(cart);
+            return ResponseEntity.ok(new ApiResponse("Success", cartDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }

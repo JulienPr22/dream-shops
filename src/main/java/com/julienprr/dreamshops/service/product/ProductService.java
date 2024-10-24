@@ -2,6 +2,7 @@ package com.julienprr.dreamshops.service.product;
 
 import com.julienprr.dreamshops.dto.ImageDto;
 import com.julienprr.dreamshops.dto.ProductDto;
+import com.julienprr.dreamshops.exceptions.AlreadyExistsException;
 import com.julienprr.dreamshops.exceptions.ResourceNotFoundException;
 import com.julienprr.dreamshops.model.Category;
 import com.julienprr.dreamshops.model.Image;
@@ -28,6 +29,10 @@ public class ProductService implements IProductService {
 
     @Override
     public Product addProduct(ProductAddRequest request) {
+        if (productExists(request.getName(), request.getBrand())) {
+            throw new AlreadyExistsException("Product " + request.getBrand() + " - " + request.getName() + " already exists");
+        }
+
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName())).orElseGet(() -> {
             Category newCategory = new Category(request.getCategory().getName());
             return categoryRepository.save(newCategory);
@@ -35,6 +40,10 @@ public class ProductService implements IProductService {
 
         request.setCategory(category);
         return productRepository.save(createProduct(request, category));
+    }
+
+    private boolean productExists(String productName, String brand) {
+        return productRepository.existsByNameAndBrand(productName, brand);
     }
 
     private Product createProduct(ProductAddRequest request, Category category) {
@@ -114,9 +123,7 @@ public class ProductService implements IProductService {
     public ProductDto convertToDto(Product product) {
         ProductDto productDto = modelMapper.map(product, ProductDto.class);
         List<Image> images = imageRepository.findByProductId(product.getId());
-        List<ImageDto> imageDtos = images.stream()
-                .map(image -> modelMapper.map(image, ImageDto.class))
-                .toList();
+        List<ImageDto> imageDtos = images.stream().map(image -> modelMapper.map(image, ImageDto.class)).toList();
         productDto.setImages(imageDtos);
         return productDto;
     }

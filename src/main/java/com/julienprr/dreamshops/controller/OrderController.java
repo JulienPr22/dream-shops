@@ -20,17 +20,18 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class OrderController {
     private final IOrderService orderService;
 
-    @PostMapping("/order")
-    public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
+    @PostMapping("/order/create")
+    public ResponseEntity<ApiResponse> placeOrder(@RequestParam Long userId) {
         try {
             Order order = orderService.placeOrder(userId);
-            return ResponseEntity.ok(new ApiResponse("Order created successfully", order));
+            OrderDto orderDto = orderService.convertToDto(order);
+            return ResponseEntity.ok(new ApiResponse("Order created successfully", orderDto));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Create order failed", e.getMessage()));
         }
     }
 
-    @GetMapping("order/$){orderId}")
+    @GetMapping("order/{orderId}")
     public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
         try {
             OrderDto orderDto = orderService.getOrderById(orderId);

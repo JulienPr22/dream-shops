@@ -1,14 +1,18 @@
 package com.julienprr.dreamshops.service.cart;
 
+import com.julienprr.dreamshops.dto.CartDto;
 import com.julienprr.dreamshops.exceptions.ResourceNotFoundException;
 import com.julienprr.dreamshops.model.Cart;
+import com.julienprr.dreamshops.model.User;
 import com.julienprr.dreamshops.repository.CartItemRepository;
 import com.julienprr.dreamshops.repository.CartRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -17,6 +21,7 @@ public class CartService implements ICartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final AtomicLong cartIdGenerator = new AtomicLong(0);
+    private final ModelMapper modelMapper;
 
     @Override
     public Cart getCartById(Long id) {
@@ -43,15 +48,22 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public Long initializeNewCart() {
-        Cart newCart = new Cart();
-        Long cartId = cartIdGenerator.incrementAndGet();
-        newCart.setId(cartId);
-        return cartRepository.save(newCart).getId();
+    public Cart initializeNewCart(User user) {
+        return Optional.ofNullable(getCartByUserId(user.getId()))
+                .orElseGet(() -> {
+                    Cart cart = new Cart();
+                    cart.setUser(user);
+                    return cartRepository.save(cart);
+                });
     }
 
     @Override
     public Cart getCartByUserId(Long userId) {
         return cartRepository.findByUserId(userId);
+    }
+
+    @Override
+    public CartDto convertToDto(Cart cart) {
+        return modelMapper.map(cart, CartDto.class);
     }
 }
