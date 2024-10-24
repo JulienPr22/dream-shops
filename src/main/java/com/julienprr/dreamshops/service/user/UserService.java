@@ -9,6 +9,9 @@ import com.julienprr.dreamshops.request.UserCreateRequest;
 import com.julienprr.dreamshops.request.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User getUserById(Long userId) {
@@ -33,7 +37,7 @@ public class UserService implements IUserService {
                     user.setFirstname(req.getFirstname());
                     user.setLastname(req.getLastname());
                     user.setEmail(req.getEmail());
-                    user.setPassword(req.getPassword());
+                    user.setPassword(passwordEncoder.encode(req.getPassword()));
                     return userRepository.save(user);
                 }).orElseThrow(() -> new AlreadyExistsException("User with email " + request.getEmail() + " already exists"));
     }
@@ -57,5 +61,12 @@ public class UserService implements IUserService {
     @Override
     public UserDto convertToDto(User user) {
         return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email);
     }
 }

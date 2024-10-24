@@ -10,6 +10,7 @@ import com.julienprr.dreamshops.response.ApiResponse;
 import com.julienprr.dreamshops.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -110,7 +111,7 @@ public class ProductController {
         }
     }
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("product/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody ProductAddRequest product) {
         try {
@@ -122,6 +123,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("product/update/{id}")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long id, @RequestBody ProductUpdateRequest product) {
         try {
@@ -133,6 +135,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("product/delete/{id}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
         try {
